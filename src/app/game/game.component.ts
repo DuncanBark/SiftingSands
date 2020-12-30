@@ -12,7 +12,7 @@ export class GameComponent implements OnInit {
 
   private p5;
   money = 0;
-  displayStore = false;
+  displayStore = true;
   upgradeDict: {[id:string] : Upgrade; } = {};
 
   constructor() {

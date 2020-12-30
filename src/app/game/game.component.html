@@ -1,5 +1,5 @@
-<div id="game-canvas">
-    <h2>{{ money.toFixed(2) }}</h2>
+<h2 style="margin: 20px 0px 10px 10px">{{ money.toFixed(2) }}</h2>
+<div class="game-canvas" id="game-canvas">
     <b (click)="clickStore()">Store</b>
     <div [ngSwitch]="displayStore">
         <app-store *ngSwitchCase="true" [upgradeDict]="upgradeDict"></app-store>
