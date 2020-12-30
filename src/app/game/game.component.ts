@@ -11,8 +11,8 @@ import * as p5 from 'p5';
 export class GameComponent implements OnInit {
 
   private p5;
-  private displayStore = false;
-  upgradeList: Upgrade[] = [];
+  displayStore = false;
+  upgradeDict: {[id:string] : Upgrade; } = {};
 
   constructor() {
     console.log('Main app constructed');
@@ -30,6 +30,8 @@ export class GameComponent implements OnInit {
       let grains: Sand[] = [];
       let frame_rate = 60;
       let money = 0;
+
+      console.log(this.upgradeDict);
   
       p5.setup = () => {
         p5.frameRate(frame_rate);
@@ -40,9 +42,17 @@ export class GameComponent implements OnInit {
   
       p5.draw = () => {
         p5.background(75);
+
+        // get current upgrade values
+        let curRange = this.upgradeDict["siftRange"].value;
+        let curEfficiency = this.upgradeDict["siftEfficiency"].value;
+        let curWeight = this.upgradeDict["grainWeight"].value;
+        let curRarity = this.upgradeDict["grainRarity"].value;
+        let curFrequency = this.upgradeDict["grainFrequency"].value
+
         grains.forEach(function (grain) {
           grain.show(p5);
-          grain.update(grainWeight, grainRarity);
+          grain.update(curWeight, curRarity);
       
           // remove if grain goes off window
           // height is doubled so that dust particles wont disappear too early
@@ -51,10 +61,10 @@ export class GameComponent implements OnInit {
           }
       
           // sifting if mouse is in range of sand particle
-          if (p5.mouseX >= Math.abs(grain.x - siftRange) && p5.mouseX <= (grain.x + siftRange)) {
+          if (p5.mouseX >= Math.abs(grain.x - curRange) && p5.mouseX <= (grain.x + curRange)) {
               if (p5.mouseY >= grain.y && p5.mouseY <= (grain.y + 10)) {
                   if (!grain.sifted) {
-                      money += grain.sift(siftEfficiency);
+                      money += grain.sift(curEfficiency);
                       // document.getElementById("currentMoney").innerHTML = "$" + String(money.toFixed(2));
                   }
               }
@@ -62,12 +72,12 @@ export class GameComponent implements OnInit {
         });
     
         // create new grain as a factor of framerate
-        let sandRate = Number(frame_rate - grainFrequency); // how many frames per grain (decreases with grainFrequency)
+        let sandRate = Number(frame_rate - curFrequency); // how many frames per grain (decreases with grainFrequency)
         if (sandRate <= 1) {
             sandRate = 1;
         }
         if (p5.frameCount % sandRate == 0) {
-            grains.push(new Sand(Math.random()*p5.width, 0, 2, grainWeight, grainRarity));
+            grains.push(new Sand(Math.random()*p5.width, 0, 2, curWeight, curRarity));
         }
       };
     };
@@ -77,11 +87,12 @@ export class GameComponent implements OnInit {
 
   private createUpgrades = () => {
     console.log('creating upgrades');
-    this.upgradeList.push({name: 'Sift Range',       cost: 0.25,  increaseCost: 2,     value: 5,     increaseValue: 5     } as Upgrade);
-    this.upgradeList.push({name: 'Sift Efficiency',  cost: 0.1,   increaseCost: 1.25,  value: 0.1,   increaseValue: 0.1   } as Upgrade);
-    this.upgradeList.push({name: 'Grain Weight',     cost: 1.25,  increaseCost: 1.5,   value: 1,     increaseValue: 0.5   } as Upgrade);
-    this.upgradeList.push({name: 'Grain Rarity',     cost: 5,     increaseCost: 5,     value: 0.01,  increaseValue: 0.01  } as Upgrade);
-    this.upgradeList.push({name: 'Grain Frequency',  cost: 0.5,   increaseCost: 1.75,  value: 0,     increaseValue: 1     } as Upgrade);
+
+    this.upgradeDict["siftRange"]      = {name: 'Sift Range',       cost: 0.25,  increaseCost: 2,     value: 5,     increaseValue: 5     } as Upgrade;
+    this.upgradeDict["siftEfficiency"] = {name: 'Sift Efficiency',  cost: 0.1,   increaseCost: 1.25,  value: 0.1,   increaseValue: 0.1   } as Upgrade;
+    this.upgradeDict["grainWeight"]    = {name: 'Grain Weight',     cost: 1.25,  increaseCost: 1.5,   value: 1,     increaseValue: 0.5   } as Upgrade;
+    this.upgradeDict["grainRarity"]    = {name: 'Grain Rarity',     cost: 5,     increaseCost: 5,     value: 0.01,  increaseValue: 0.01  } as Upgrade;
+    this.upgradeDict["grainFrequency"] = {name: 'Grain Frequency',  cost: 0.5,   increaseCost: 1.75,  value: 0,     increaseValue: 1     } as Upgrade;
   }
 
   clickStore() {

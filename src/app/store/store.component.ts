@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit} from '@angular/core';
 import { Upgrade } from './upgrade';
 
 @Component({
@@ -7,11 +7,10 @@ import { Upgrade } from './upgrade';
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
-  @Input() upgradeList: Upgrade[];
+  @Input() upgradeDict: {[id:string] : Upgrade};
 
   constructor() { }
 
   ngOnInit() { }
-
 
 }

@@ -1,8 +1,8 @@
 <div class="storeDiv">
     <div class="upgrades">
         <ul>
-            <li *ngFor="let upgrade of upgradeList">
-                <p>Name: {{upgrade.name}}, Cost: {{upgrade.cost}}</p>
+            <li *ngFor="let upgrade of upgradeDict | keyvalue">
+                <p>Name: {{upgrade.value.name}}, Cost: {{upgrade.value.cost}}</p>
             </li>
         </ul>
     </div>
