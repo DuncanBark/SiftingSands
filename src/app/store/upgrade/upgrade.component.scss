@@ -1,5 +1,5 @@
 .upgrade {
-    width: 360px;
+    width: 440px;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -41,8 +41,17 @@
     visibility: visible;
 }
 
+.upgrade-cost {
+    position: relative;
+    font-weight: bold;
+    margin: 10px 10px 10px 10px;
+    padding: 3px 6px 3px 6px;
+    float: right;
+}
+
 .purchase-upgrade {
     cursor: pointer;
+    font-weight: normal;
     float: right;
     width: fit-content;
     padding: 3px 6px 3px 6px;
