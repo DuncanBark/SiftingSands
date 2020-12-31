@@ -11,7 +11,7 @@ import * as p5 from 'p5';
 export class GameComponent implements OnInit {
 
   private p5;
-  money: number = 0;
+  money: number = 10000000;
   displayStore: boolean = true;
   upgradeDict: {[id:string] : Upgrade; } = {};
 
@@ -48,11 +48,11 @@ export class GameComponent implements OnInit {
         p5.background(75);
 
         // get current upgrade values
-        let curRange = this.upgradeDict["siftRange"].value;
-        let curEfficiency = this.upgradeDict["siftEfficiency"].value;
-        let curWeight = this.upgradeDict["grainWeight"].value;
-        let curRarity = this.upgradeDict["grainRarity"].value;
-        let curFrequency = this.upgradeDict["grainFrequency"].value
+        let curRange = this.upgradeDict["Sift Range"].value;
+        let curEfficiency = this.upgradeDict["Sift Efficiency"].value;
+        let curWeight = this.upgradeDict["Grain Weight"].value;
+        let curRarity = this.upgradeDict["Grain Rarity"].value;
+        let curFrequency = this.upgradeDict["Grain Frequency"].value
         let money = this.money;
 
         grains.forEach(function (item, index) {
@@ -69,13 +69,14 @@ export class GameComponent implements OnInit {
         if (sandRate <= 1) {
             sandRate = 1;
         }
+        let grainWidth = 2 + (this.upgradeDict["Grain Weight"].quantity[0] / 6);
         if (p5.frameCount % sandRate == 0) {
-            grains.push(new Sand(Math.random()*p5.width, 0, 2, curWeight, curRarity));
+          grains.push(new Sand(Math.random()*p5.width, 0, grainWidth, curWeight, curRarity));
         }
 
         function updateGrain(grain) {
           grain.show(p5);
-          grain.update(curWeight, curRarity);
+          grain.update();
           let removeGrain = true;
       
           // if the grain itself goes off the window, check its dustPaticles (if any) and only remove
@@ -115,16 +116,21 @@ export class GameComponent implements OnInit {
 
   private createUpgrades = () => {
     console.log('creating upgrades');
-
-    this.upgradeDict["siftRange"]      = {name: 'Sift Range (0/20)',       cost: 0.25,  increaseCost: 2,    value: 50,    increaseValue: 5,     tooltip: "Be further away from grains to sift them"  } as Upgrade;
-    this.upgradeDict["siftEfficiency"] = {name: 'Sift Efficiency (0/20)',  cost: 0.1,   increaseCost: 2,    value: 1,     increaseValue: 0.05,  tooltip: "Allows you to sift more reliably"  } as Upgrade;
-    this.upgradeDict["grainWeight"]    = {name: 'Grain Weight (0/10)',     cost: 1.25,  increaseCost: 1.5,  value: 1,     increaseValue: 0.5,   tooltip: "Grains fall quicker"  } as Upgrade;
-    this.upgradeDict["grainRarity"]    = {name: 'Grain Rarity (0/5)',      cost: 5,     increaseCost: 5,    value: 0.01,  increaseValue: 0.01,  tooltip: "Get more money from each successful sift"  } as Upgrade;
-    this.upgradeDict["grainFrequency"] = {name: 'Grain Frequency (0/60)',  cost: 0.5,   increaseCost: 1.1,  value: 60,    increaseValue: 1,     tooltip: "More grains? What's going on?"  } as Upgrade;
+    //                                   new Upgrade(name,                cost,   increaseCost,  value,  increaseValue,  quantity,  tooltip)
+    this.upgradeDict["Sift Range"]      = new Upgrade('Sift Range',        0.25,   2,             50,     5,              [0, 20],   "Be further away from grains to sift them");
+    this.upgradeDict["Sift Efficiency"] = new Upgrade('Sift Efficiency',   0.1,    2,             1,      0.05,           [0, 20],   "Allows you to sift more reliably");
+    this.upgradeDict["Grain Weight"]    = new Upgrade('Grain Weight',      1.25,   1.5,           1,      0.5,            [0, 10],   "Grains fall quicker");
+    this.upgradeDict["Grain Rarity"]    = new Upgrade('Grain Rarity',      5,      5,             0.01,   0.01,           [0, 5],    "Get more money from each successful sift");
+    this.upgradeDict["Grain Frequency"] = new Upgrade('Grain Frequency',   0.5,    1.1,           60,     1,              [0, 60],   "More grains? What's going on?");
   }
 
   clickStore() {
     this.displayStore = !this.displayStore;
+  }
+
+  updateUpgrade(value: [number, Upgrade]) {
+    this.money = value[0];
+    this.upgradeDict[value[1].name] = value[1];
   }
 
 }

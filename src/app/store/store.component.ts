@@ -1,4 +1,4 @@
-import { Component, Input, OnInit} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Upgrade } from './upgrade';
 
 @Component({
@@ -10,13 +10,14 @@ export class StoreComponent implements OnInit {
   @Input() upgradeDict: {[id:string] : Upgrade};
   @Input() money: number;
 
+  @Output() upgradeReturn = new EventEmitter<[number, Upgrade]>();
+
   constructor() { }
 
-  ngOnInit() {
-    // let upgradeDiv = document.getElementsByClassName('upgrade-list') as HTMLCollectionOf<HTMLElement>;
-    // let liList = upgradeDiv[0].getElementsByTagName("li") as HTMLCollectionOf<HTMLElement>;
-    // console.log(upgradeDiv[0]);
-    // console.log(liList);
+  ngOnInit() { }
+
+  emitUpgradeReturn(value: [number, Upgrade]) {
+    this.upgradeReturn.emit(value);
   }
   
 

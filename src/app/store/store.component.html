@@ -3,7 +3,7 @@
         <h2>Ye Olde Store</h2>
         <ul class="upgrade-list">
             <li *ngFor="let upgrade of upgradeDict | keyvalue">
-                <app-upgrade attr.id="{{ upgrade.value.name }}" [upgrade]="upgrade.value" [afford]="money >= upgrade.value.cost"></app-upgrade>
+                <app-upgrade attr.id="{{ upgrade.value.name }}" [upgrade]="upgrade.value" [money]="money" (upgradeReturn)="emitUpgradeReturn($event)"></app-upgrade>
             </li>
         </ul>
     </div>

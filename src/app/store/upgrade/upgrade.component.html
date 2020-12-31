@@ -1,8 +1,11 @@
 <div class="upgrade">
-    <div class="upgrade-text">{{ upgrade.name }}
+    <div class="upgrade-text">
+        {{ upgrade.name }} ({{ upgrade.quantity[0] }}/{{ upgrade.quantity[1] }})
         <div class="tooltiptext">{{ upgrade.tooltip }}</div>
     </div>
-    <b class="purchase-upgrade">Buy max</b>
-    <b class="purchase-upgrade">Buy one</b>
-    <div class="upgrade-cost">${{ upgrade.cost }}</div>
+    <b class="purchase-upgrade" (click)="purchase(true)">Buy max</b>
+    <b class="purchase-upgrade" (click)="purchase(false)">Buy one</b>
+    <div [ngSwitch]="upgrade.quantity[0] === upgrade.quantity[1]">
+        <div *ngSwitchCase=false attr.id="{{ upgrade.name }}Cost"class="upgrade-cost">${{ upgrade.cost.toFixed(2) }}</div>
+    </div>
 </div>

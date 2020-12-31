@@ -2,6 +2,6 @@
 <div class="game-canvas" id="game-canvas">
     <b class="store-button" (click)="clickStore()">Store</b>
     <div [ngSwitch]="displayStore">
-        <app-store *ngSwitchCase="true" [upgradeDict]="upgradeDict" [money]="money"></app-store>
+        <app-store *ngSwitchCase="true" [upgradeDict]="upgradeDict" [money]="money" (upgradeReturn)="updateUpgrade($event)"></app-store>
     </div>
 </div>

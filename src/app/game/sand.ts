@@ -1,5 +1,3 @@
-// import * as p5 from 'p5';
-
 export class Sand {
     x: number;
     y: number;
@@ -9,8 +7,6 @@ export class Sand {
     weight: number;
     color: number;
     dustParticles: Sand[];
-
-    // private p5 = new p5();
 
     constructor(x, y, w, weight, rarity) {
         this.x = x;
@@ -34,20 +30,17 @@ export class Sand {
         // show dust particles if sifted, otherwise show normal sand particle
         if (this.sifted) {
             this.dustParticles.forEach( function(dust) {
-                dust.update(dust.weight, dust.rarity);
+                dust.update();
                 p5.fill(dust.color);
                 p5.noStroke();
-                p5.square(dust.x, dust.y, 1);
+                p5.ellipse(dust.x, dust.y, dust.w);
             });
         } else {
-            p5.square(this.x, this.y, this.w);
+            p5.ellipse(this.x, this.y, this.w);
         }
     }
 
-    update(weight, rarity) {
-        this.weight = weight;
-        this.rarity = rarity;
-
+    update() {
         // jitter particle horizontally 
         let jitterValueX = 2 - this.weight;
         if (jitterValueX <= 1) {
@@ -74,7 +67,7 @@ export class Sand {
     sift(siftEff) {
         // create 2-4 dust particles after sifting
         for (let i = 0; i < Number(Math.random() * 3) + 2; i++) {
-            this.dustParticles.push(new Sand(this.x, this.y, this.w, this.weight/1.5, this.rarity));
+            this.dustParticles.push(new Sand(this.x, this.y, this.w/2, this.weight/1.5, this.rarity));
         }
 
         // if efficiency check passes, return rarity (as money)
