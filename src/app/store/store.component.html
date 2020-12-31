@@ -1,8 +1,9 @@
 <div class="storeDiv">
     <div class="upgrades">
-        <ul>
+        <h2>Ye Olde Store</h2>
+        <ul class="upgrade-list">
             <li *ngFor="let upgrade of upgradeDict | keyvalue">
-                <p>Name: {{upgrade.value.name}}, Cost: {{upgrade.value.cost}}</p>
+                <app-upgrade attr.id="{{ upgrade.value.name }}" [upgrade]="upgrade.value" [afford]="money >= upgrade.value.cost"></app-upgrade>
             </li>
         </ul>
     </div>

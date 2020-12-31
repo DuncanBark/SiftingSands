@@ -11,8 +11,8 @@ import * as p5 from 'p5';
 export class GameComponent implements OnInit {
 
   private p5;
-  money = 0;
-  displayStore = true;
+  money: number = 0;
+  displayStore: boolean = true;
   upgradeDict: {[id:string] : Upgrade; } = {};
 
   constructor() {
@@ -116,11 +116,11 @@ export class GameComponent implements OnInit {
   private createUpgrades = () => {
     console.log('creating upgrades');
 
-    this.upgradeDict["siftRange"]      = {name: 'Sift Range',       cost: 0.25,  increaseCost: 2,     value: 500,     increaseValue: 5     } as Upgrade;
-    this.upgradeDict["siftEfficiency"] = {name: 'Sift Efficiency',  cost: 0.1,   increaseCost: 1.25,  value: 1,   increaseValue: 0.1   } as Upgrade;
-    this.upgradeDict["grainWeight"]    = {name: 'Grain Weight',     cost: 1.25,  increaseCost: 1.5,   value: 1,     increaseValue: 0.5   } as Upgrade;
-    this.upgradeDict["grainRarity"]    = {name: 'Grain Rarity',     cost: 5,     increaseCost: 5,     value: 0.01,  increaseValue: 0.01  } as Upgrade;
-    this.upgradeDict["grainFrequency"] = {name: 'Grain Frequency',  cost: 0.5,   increaseCost: 1.75,  value: 60,     increaseValue: 1     } as Upgrade;
+    this.upgradeDict["siftRange"]      = {name: 'Sift Range (0/20)',       cost: 0.25,  increaseCost: 2,    value: 50,    increaseValue: 5,     tooltip: "Be further away from grains to sift them"  } as Upgrade;
+    this.upgradeDict["siftEfficiency"] = {name: 'Sift Efficiency (0/20)',  cost: 0.1,   increaseCost: 2,    value: 1,     increaseValue: 0.05,  tooltip: "Allows you to sift more reliably"  } as Upgrade;
+    this.upgradeDict["grainWeight"]    = {name: 'Grain Weight (0/10)',     cost: 1.25,  increaseCost: 1.5,  value: 1,     increaseValue: 0.5,   tooltip: "Grains fall quicker"  } as Upgrade;
+    this.upgradeDict["grainRarity"]    = {name: 'Grain Rarity (0/5)',      cost: 5,     increaseCost: 5,    value: 0.01,  increaseValue: 0.01,  tooltip: "Get more money from each successful sift"  } as Upgrade;
+    this.upgradeDict["grainFrequency"] = {name: 'Grain Frequency (0/60)',  cost: 0.5,   increaseCost: 1.1,  value: 60,    increaseValue: 1,     tooltip: "More grains? What's going on?"  } as Upgrade;
   }
 
   clickStore() {

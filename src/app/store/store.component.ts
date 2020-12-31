@@ -8,9 +8,16 @@ import { Upgrade } from './upgrade';
 })
 export class StoreComponent implements OnInit {
   @Input() upgradeDict: {[id:string] : Upgrade};
+  @Input() money: number;
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    // let upgradeDiv = document.getElementsByClassName('upgrade-list') as HTMLCollectionOf<HTMLElement>;
+    // let liList = upgradeDiv[0].getElementsByTagName("li") as HTMLCollectionOf<HTMLElement>;
+    // console.log(upgradeDiv[0]);
+    // console.log(liList);
+  }
+  
 
 }

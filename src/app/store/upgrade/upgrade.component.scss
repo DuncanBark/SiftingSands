@@ -1,0 +1,56 @@
+.upgrade {
+    width: 360px;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    display: inline-block;
+    margin: 10px 10px 10px 15px;
+    padding: 10px 5px 10px 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+    clear: both;
+}
+
+.upgrade-text {
+    position: relative;
+    margin: 10px 10px 10px 10px;
+    padding: 3px 6px 3px 6px;
+    border-bottom: 1px dotted black;
+    float: left;
+}
+
+.upgrade-text .tooltiptext {
+    visibility: hidden;
+    background-color: #555;
+    color: black;
+    text-align: center;
+    padding: 5px 0;
+    border: 1px solid black;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    width: 150px;
+    top: 100%;
+    left: 50%;
+    margin-left: -75px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+.upgrade-text:hover .tooltiptext {
+    visibility: visible;
+}
+
+.purchase-upgrade {
+    cursor: pointer;
+    float: right;
+    width: fit-content;
+    padding: 3px 6px 3px 6px;
+    margin: 10px 10px 10px 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.purchase-upgrade:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}

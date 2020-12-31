@@ -4,13 +4,15 @@ export class Upgrade {
     increaseCost: number;
     value: number;
     increaseValue: number;
+    tooltip: string;
 
-    constructor(name: string, cost: number, increaseCost: number, value: number, increaseValue: number) {
+    constructor(name: string, cost: number, increaseCost: number, value: number, increaseValue: number, tooltip: string) {
         this.name = name;
         this.cost = cost;
         this.increaseCost = increaseCost;
         this.value = value;
         this.increaseValue = increaseValue;
+        this.tooltip = tooltip;
     }
 
     // returns [new money amount, new upgrade value]
