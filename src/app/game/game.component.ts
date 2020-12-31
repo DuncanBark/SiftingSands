@@ -31,6 +31,9 @@ export class GameComponent implements OnInit {
       let grains: Sand[] = [];
       let frame_rate = 60;
       let offScreen = true;
+      let holdSift = false;
+      let siftX: number;
+      let siftY: number;
   
       p5.setup = () => {
         p5.frameRate(frame_rate);
@@ -46,6 +49,11 @@ export class GameComponent implements OnInit {
   
       p5.draw = () => {
         p5.background(75);
+
+        if (!holdSift) {
+          siftX = p5.mouseX;
+          siftY = p5.mouseY;
+        }
 
         // get current upgrade values
         let curRange = this.upgradeDict["Sift Range"].value;
@@ -95,17 +103,29 @@ export class GameComponent implements OnInit {
           }
 
           // sifting if mouse is in range of sand particle and the mouse is on screen
-          if (!offScreen) {
-            if (p5.mouseX >= grain.x - curRange && p5.mouseX <= (grain.x + curRange)) {
-                if (p5.mouseY >= grain.y && p5.mouseY <= (grain.y + 10)) {
-                    if (!grain.sifted) {
-                        money += grain.sift(curEfficiency);
-                    }
-                }
+          if (!offScreen || holdSift) {
+
+            p5.stroke(p5.color(100, 200, 100));
+            p5.line(siftX-curRange, siftY, siftX+curRange, siftY);
+
+            for (let i = 0; i<100; i++) {
+              if (siftX >= grain.x - curRange && siftX <= (grain.x + curRange)) {
+                  if (siftY >= grain.y && siftY <= (grain.y + 5)) {
+                      if (!grain.sifted) {
+                          money += grain.sift(curEfficiency);
+                      }
+                  }
+              }
             }
           }
 
           return removeGrain;
+        }
+
+        p5.mouseClicked = () => {
+          holdSift = !holdSift;
+          siftX = p5.mouseX;
+          siftY = p5.mouseY;
         }
 
       };
