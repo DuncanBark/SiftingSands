@@ -123,9 +123,11 @@ export class GameComponent implements OnInit {
         }
 
         p5.mouseClicked = () => {
-          holdSift = !holdSift;
-          siftX = p5.mouseX;
-          siftY = p5.mouseY;
+          if (!offScreen) {
+            holdSift = !holdSift;
+            siftX = p5.mouseX;
+            siftY = p5.mouseY;
+          }
         }
 
       };
