@@ -34,6 +34,7 @@ export class GameComponent implements OnInit {
       let holdSift = false;
       let siftX: number;
       let siftY: number;
+      let stableFrameRate = 0;
   
       p5.setup = () => {
         p5.frameRate(frame_rate);
@@ -48,6 +49,7 @@ export class GameComponent implements OnInit {
       };
   
       p5.draw = () => {
+        p5.clear();
         p5.background(75);
 
         if (!holdSift) {
@@ -69,30 +71,39 @@ export class GameComponent implements OnInit {
             grains.splice(index, 1);
           }
         });
+
+        if (p5.frameCount % frame_rate === 0) {
+          stableFrameRate = p5.frameRate();
+      }
+
+        p5.text(`requestedFPS = ${frame_rate}`, 200, 20);
+        p5.text(`realFPS = ${p5.round(stableFrameRate)}`, 200, 40);
     
         this.money = money;
 
         // create new grain as a factor of framerate
-        let sandRate = Number(frame_rate - curFrequency); // how many frames per grain (decreases with grainFrequency)
-        if (sandRate <= 1) {
-            sandRate = 1;
-        }
-        let grainWidth = 2 + (this.upgradeDict["Grain Weight"].quantity[0] / 6);
-        if (p5.frameCount % sandRate == 0) {
-          grains.push(new Sand(Math.random()*p5.width, 0, grainWidth, curWeight, curRarity));
+        let grainWidth = 2 + (this.upgradeDict["Grain Weight"].quantity[0] / 8);
+        if (p5.frameCount % 60 == 0) {
+          for (let i = 0; i <= Math.abs(curFrequency); i++) {
+            grains.push(new Sand(Math.random()*p5.width, Math.random()*-300, grainWidth, curWeight, curRarity));
+          }
         }
 
         function updateGrain(grain) {
           grain.show(p5);
           grain.update();
           let removeGrain = true;
+          let gX = grain.x;
+          let gY = grain.y;
+          let wH = p5.windowHeight;
+          let wW = p5.windowWidth;
       
           // if the grain itself goes off the window, check its dustPaticles (if any) and only remove
           // the grain if all dust particles have gone off the window
-          if (grain.y >= p5.windowHeight || (grain.x >= p5.windowWidth || grain.x <= 0)){
+          if (gY >= wH || (gX >= wW || gX <= 0)){
             removeGrain = removeGrain && true;
             for (let i = 0; i < grain.dustParticles.length; i++) {
-              if (grain.dustParticles[i].y >= p5.windowHeight || (grain.dustParticles[i].x >= p5.windowWidth || grain.dustParticles[i].x <= 0)){
+              if (grain.dustParticles[i].y >= wH || (grain.dustParticles[i].x >= wW || grain.dustParticles[i].x <= 0)){
                 removeGrain = removeGrain && true;
               } else {
                 removeGrain = removeGrain && false;
@@ -104,18 +115,14 @@ export class GameComponent implements OnInit {
 
           // sifting if mouse is in range of sand particle and the mouse is on screen
           if (!offScreen || holdSift) {
-
             p5.stroke(p5.color(100, 200, 100));
             p5.line(siftX-curRange, siftY, siftX+curRange, siftY);
-
-            for (let i = 0; i<100; i++) {
-              if (siftX >= grain.x - curRange && siftX <= (grain.x + curRange)) {
-                  if (siftY >= grain.y && siftY <= (grain.y + 5)) {
-                      if (!grain.sifted) {
-                          money += grain.sift(curEfficiency);
-                      }
-                  }
-              }
+            if (siftX >= gX - curRange && siftX <= (gX + curRange)) {
+                if (siftY >= (gY - 25) && siftY <= (gY + 5)) {
+                    if (!grain.sifted) {
+                        money += grain.sift(curEfficiency);
+                    }
+                }
             }
           }
 
@@ -143,7 +150,7 @@ export class GameComponent implements OnInit {
     this.upgradeDict["Sift Efficiency"] = new Upgrade('Sift Efficiency',   0.1,    2,             1,      0.05,           [0, 20],   "Allows you to sift more reliably");
     this.upgradeDict["Grain Weight"]    = new Upgrade('Grain Weight',      1.25,   1.5,           1,      0.5,            [0, 10],   "Grains fall quicker");
     this.upgradeDict["Grain Rarity"]    = new Upgrade('Grain Rarity',      5,      5,             0.01,   0.01,           [0, 5],    "Get more money from each successful sift");
-    this.upgradeDict["Grain Frequency"] = new Upgrade('Grain Frequency',   0.5,    1.1,           60,     1,              [0, 60],   "More grains? What's going on?");
+    this.upgradeDict["Grain Frequency"] = new Upgrade('Grain Frequency',   0.5,    1.1,           0,      1,              [0, 60],   "More grains? What's going on?");
   }
 
   clickStore() {
