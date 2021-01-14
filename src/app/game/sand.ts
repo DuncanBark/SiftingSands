@@ -6,6 +6,8 @@ export class Sand {
     rarity: number;
     weight: number;
     color: number;
+    removed: boolean;
+    opacity: number;
     dustParticles: Sand[];
 
     constructor(x, y, w, weight, rarity) {
@@ -20,6 +22,8 @@ export class Sand {
 
         this.color = 200;
 
+        this.removed = false;
+        this.opacity = 255;
         this.dustParticles = [];
     }
 
@@ -27,29 +31,52 @@ export class Sand {
         p5.fill(this.color);
         p5.noStroke();
 
+        let dustGone = true;
+
         // show dust particles if sifted, otherwise show normal sand particle
         if (this.sifted) {
-            this.dustParticles.forEach( function(dust) {
-                dust.update();
-                p5.fill(dust.color);
-                p5.noStroke();
-                p5.ellipse(dust.x, dust.y, dust.w);
-            });
+            let removeDust = true;
+            for (let i = 0; i < this.dustParticles.length; i++) {
+                removeDust = updateDust(this.dustParticles[i], this.opacity)
+                dustGone = dustGone && removeDust;
+            }
+            this.opacity -= 0.75;
         } else {
             p5.ellipse(this.x, this.y, this.w);
+        }
+
+        if (dustGone && this.dustParticles.length > 0) {
+            this.removed = true;
+        } else {
+            this.removed = false;
+        }
+
+        function updateDust(dust, opacity) {
+            if (opacity > 0) {
+                dust.update();
+                p5.fill(dust.color, opacity);
+                p5.noStroke();
+                p5.ellipse(dust.x, dust.y, dust.w);
+            } else {
+                dust.removed = true;
+                return true;
+            }
+            return false;
         }
     }
 
     update() {
+        let random_val = Math.random();
+
         // jitter particle horizontally 
         let jitterValueX = 2 - this.weight;
         if (jitterValueX <= 1) {
             jitterValueX = 1;
         }
         if (Math.random() >= 0.5) { // 50% chance to jitter left or right
-            this.x += (jitterValueX * Math.random()); // jitter right
+            this.x += (jitterValueX * random_val); // jitter right
         } else {
-            this.x -= (jitterValueX * Math.random()); // jitter left
+            this.x -= (jitterValueX * random_val); // jitter left
         }
 
         //jitter particle vertically
@@ -58,9 +85,9 @@ export class Sand {
             jitterValueY = this.weight;
         }
         if (Math.random() >= 0.01) { // 1% chance to jitter upwards
-            this.y += (this.weight * Math.random());
+            this.y += (this.weight * random_val);
         } else {
-            this.y -= (jitterValueY * Math.random());
+            this.y -= (jitterValueY * random_val);
         }
     }
 

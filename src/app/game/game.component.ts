@@ -35,6 +35,7 @@ export class GameComponent implements OnInit {
       let siftX: number;
       let siftY: number;
       let stableFrameRate = 0;
+      let curRange, curEfficiency, curWeight, curRarity, curFrequency;
   
       p5.setup = () => {
         p5.frameRate(frame_rate);
@@ -58,65 +59,65 @@ export class GameComponent implements OnInit {
         }
 
         // get current upgrade values
-        let curRange = this.upgradeDict["Sift Range"].value;
-        let curEfficiency = this.upgradeDict["Sift Efficiency"].value;
-        let curWeight = this.upgradeDict["Grain Weight"].value;
-        let curRarity = this.upgradeDict["Grain Rarity"].value;
-        let curFrequency = this.upgradeDict["Grain Frequency"].value
+        curRange = this.upgradeDict["Sift Range"].value;
+        curEfficiency = this.upgradeDict["Sift Efficiency"].value;
+        curWeight = this.upgradeDict["Grain Weight"].value;
+        curRarity = this.upgradeDict["Grain Rarity"].value;
+        curFrequency = this.upgradeDict["Grain Frequency"].value;
         let money = this.money;
+
+        if (!offScreen || holdSift) {
+          p5.stroke(p5.color(100, 200, 100));
+          p5.line(siftX-curRange, siftY, siftX+curRange, siftY);
+        }
 
         grains.forEach(function (item, index) {
           let removeGrain = updateGrain(item);
-          if (removeGrain == true) {
+          if (removeGrain) {
             grains.splice(index, 1);
           }
         });
 
+        this.money = money;
+
         if (p5.frameCount % frame_rate === 0) {
           stableFrameRate = p5.frameRate();
-      }
+        }
 
         p5.text(`requestedFPS = ${frame_rate}`, 200, 20);
         p5.text(`realFPS = ${p5.round(stableFrameRate)}`, 200, 40);
-    
-        this.money = money;
 
         // create new grain as a factor of framerate
         let grainWidth = 2 + (this.upgradeDict["Grain Weight"].quantity[0] / 8);
         if (p5.frameCount % 60 == 0) {
-          for (let i = 0; i <= Math.abs(curFrequency); i++) {
+          for (let i = 0; i <= curFrequency; i++) {
             grains.push(new Sand(Math.random()*p5.width, Math.random()*-300, grainWidth, curWeight, curRarity));
           }
         }
 
         function updateGrain(grain) {
           grain.show(p5);
+
+          if (grain.removed) {
+            return true;
+          }
+
           grain.update();
-          let removeGrain = true;
           let gX = grain.x;
           let gY = grain.y;
           let wH = p5.windowHeight;
           let wW = p5.windowWidth;
       
-          // if the grain itself goes off the window, check its dustPaticles (if any) and only remove
-          // the grain if all dust particles have gone off the window
+          // if the grain itself goes off the window remove it
           if (gY >= wH || (gX >= wW || gX <= 0)){
-            removeGrain = removeGrain && true;
-            for (let i = 0; i < grain.dustParticles.length; i++) {
-              if (grain.dustParticles[i].y >= wH || (grain.dustParticles[i].x >= wW || grain.dustParticles[i].x <= 0)){
-                removeGrain = removeGrain && true;
-              } else {
-                removeGrain = removeGrain && false;
-              }
+            if (grain.opacity <= 0) {
+              grain.removed = true;
+              return true;
             }
-          } else {
-            removeGrain = removeGrain && false;
           }
 
           // sifting if mouse is in range of sand particle and the mouse is on screen
           if (!offScreen || holdSift) {
-            p5.stroke(p5.color(100, 200, 100));
-            p5.line(siftX-curRange, siftY, siftX+curRange, siftY);
             if (siftX >= gX - curRange && siftX <= (gX + curRange)) {
                 if (siftY >= (gY - 25) && siftY <= (gY + 5)) {
                     if (!grain.sifted) {
@@ -126,7 +127,7 @@ export class GameComponent implements OnInit {
             }
           }
 
-          return removeGrain;
+          return false;
         }
 
         p5.mouseClicked = () => {
