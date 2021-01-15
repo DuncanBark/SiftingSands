@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Sand } from './sand';
 import { Upgrade } from '../store/upgrade';
+import { Option } from '../options/option';
 import * as p5 from 'p5';
 
 @Component({
@@ -12,8 +13,10 @@ export class GameComponent implements OnInit {
 
   private p5;
   money: number = 10000000;
-  displayStore: boolean = true;
+  displayStore: boolean = false;
+  displayOptions: boolean = true;
   upgradeDict: {[id:string] : Upgrade; } = {};
+  optionDict: {[id:string] : Option; } = {};
 
   constructor() {
     console.log('Main app constructed');
@@ -22,6 +25,7 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     console.log('Main init');
     this.createUpgrades();
+    this.createOptions();
     this.createCanvas();
   }
 
@@ -51,7 +55,7 @@ export class GameComponent implements OnInit {
   
       p5.draw = () => {
         p5.clear();
-        p5.background(75);
+        p5.background(Number(this.optionDict["Background color"].value));
 
         if (!holdSift) {
           siftX = p5.mouseX;
@@ -146,7 +150,7 @@ export class GameComponent implements OnInit {
 
   private createUpgrades = () => {
     console.log('creating upgrades');
-    //                                   new Upgrade(name,                cost,   increaseCost,  value,  increaseValue,  quantity,  tooltip)
+    //                                    new Upgrade(name,                cost,   increaseCost,  value,  increaseValue,  quantity,  tooltip)
     this.upgradeDict["Sift Range"]      = new Upgrade('Sift Range',        0.25,   2,             50,     5,              [0, 20],   "Be further away from grains to sift them");
     this.upgradeDict["Sift Efficiency"] = new Upgrade('Sift Efficiency',   0.1,    2,             1,      0.05,           [0, 20],   "Allows you to sift more reliably");
     this.upgradeDict["Grain Weight"]    = new Upgrade('Grain Weight',      1.25,   1.5,           1,      0.5,            [0, 10],   "Grains fall quicker");
@@ -154,13 +158,29 @@ export class GameComponent implements OnInit {
     this.upgradeDict["Grain Frequency"] = new Upgrade('Grain Frequency',   0.5,    1.1,           0,      1,              [0, 60],   "More grains? What's going on?");
   }
 
-  clickStore() {
-    this.displayStore = !this.displayStore;
-  }
-
   updateUpgrade(value: [number, Upgrade]) {
     this.money = value[0];
     this.upgradeDict[value[1].name] = value[1];
+  }
+
+  clickStore() {
+    this.displayStore = !this.displayStore;
+    this.displayOptions = false;
+  }
+
+  private createOptions = () => {
+    console.log('creating options');
+    //                                    new Option(name,               value)
+    this.optionDict["Background color"] = new Option('Background color', 70);
+  }
+
+  updateOption(value) {
+    this.optionDict = value;
+  }
+
+  clickOptions() {
+    this.displayStore = false;
+    this.displayOptions = !this.displayOptions;
   }
 
 }

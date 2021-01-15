@@ -1,0 +1,11 @@
+<div class="optionsDiv">
+    <div class="options">
+        <h2>Options</h2>
+        <ul class="options-list">
+            <li *ngFor="let option of optionDict | keyvalue">
+                <label for="{{ option.value.name }}">{{ option.value.name }}</label>
+                <input type="number" id="{{ option.value.name }}" value="{{ option.value.value }}" (input)="setOption(option.value.name, $event.target.value)">
+            </li>
+        </ul>
+    </div>
+</div>

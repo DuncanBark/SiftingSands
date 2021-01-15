@@ -7,13 +7,15 @@ import { AppComponent } from './app.component';
 import { GameComponent } from './game/game.component';
 import { StoreComponent } from './store/store.component';
 import { UpgradeComponent } from './store/upgrade/upgrade.component';
+import { OptionsComponent } from './options/options.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GameComponent,
     StoreComponent,
-    UpgradeComponent
+    UpgradeComponent,
+    OptionsComponent
   ],
   imports: [
     BrowserModule,

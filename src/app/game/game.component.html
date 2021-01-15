@@ -4,4 +4,8 @@
     <div [ngSwitch]="displayStore">
         <app-store *ngSwitchCase="true" [upgradeDict]="upgradeDict" [money]="money" (upgradeReturn)="updateUpgrade($event)"></app-store>
     </div>
+    <b class="options-button" (click)="clickOptions()">Options</b>
+    <div [ngSwitch]="displayOptions">
+        <app-options *ngSwitchCase="true" [optionDict]="optionDict" (optionReturn)="updateOption($event)"></app-options>
+    </div>
 </div>
