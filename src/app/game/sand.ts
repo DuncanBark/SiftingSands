@@ -7,6 +7,7 @@ export class Sand {
     weight: number;
     color: number;
     removed: boolean;
+    dustRemoved: boolean;
     opacity: number;
     dustParticles: Sand[];
 
@@ -23,6 +24,7 @@ export class Sand {
         this.color = 200;
 
         this.removed = false;
+        this.dustRemoved = true;
         this.opacity = 255;
         this.dustParticles = [];
     }
@@ -31,25 +33,23 @@ export class Sand {
         p5.fill(this.color);
         p5.noStroke();
 
-        let dustGone = true;
-
         // show dust particles if sifted, otherwise show normal sand particle
         if (this.sifted) {
             let removeDust = true;
+            let wW = p5.windowWidth;
+            let wH = p5.windowHeight;
             for (let i = 0; i < this.dustParticles.length; i++) {
-                removeDust = updateDust(this.dustParticles[i], this.opacity)
-                dustGone = dustGone && removeDust;
+                removeDust = updateDust(this.dustParticles[i], this.opacity);
+                if (this.dustParticles[i].y >= wH || (this.dustParticles[i].x >= wW || this.dustParticles[i].x <= 0) || removeDust) {
+                    this.dustParticles.splice(i, 1);
+                }
             }
             this.opacity -= 0.75;
         } else {
             p5.ellipse(this.x, this.y, this.w);
         }
 
-        if (dustGone && this.dustParticles.length > 0) {
-            this.removed = true;
-        } else {
-            this.removed = false;
-        }
+        this.dustRemoved = this.dustParticles.length == 0;
 
         function updateDust(dust, opacity) {
             if (opacity > 0) {
@@ -58,7 +58,6 @@ export class Sand {
                 p5.noStroke();
                 p5.ellipse(dust.x, dust.y, dust.w);
             } else {
-                dust.removed = true;
                 return true;
             }
             return false;
@@ -92,6 +91,9 @@ export class Sand {
     }
 
     sift(siftEff) {
+
+        this.dustRemoved = false;
+
         // create 2-4 dust particles after sifting
         for (let i = 0; i < Number(Math.random() * 3) + 2; i++) {
             this.dustParticles.push(new Sand(this.x, this.y, this.w/2, this.weight/1.5, this.rarity));

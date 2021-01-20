@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵɵstylePropInterpolate4 } from '@angular/core';
 import { Sand } from './sand';
 import { Upgrade } from '../store/upgrade';
 import { Option } from '../options/option';
@@ -32,6 +32,7 @@ export class GameComponent implements OnInit {
   private createCanvas = () => {
     console.log('creating canvas');
     const sketch = p5 => {
+      // p5.disableFriendlyErrors = true;
       let grains: Sand[] = [];
       let frame_rate = 60;
       let offScreen = true;
@@ -100,9 +101,15 @@ export class GameComponent implements OnInit {
         }
 
         function updateGrain(grain) {
+          if (grain.removed) {
+            return true;
+          }
+
           grain.show(p5);
 
-          if (grain.removed) {
+          // if all the dust has been removed
+          if (grain.dustRemoved && grain.sifted) {
+            grain.removed = true;
             return true;
           }
 
@@ -113,11 +120,9 @@ export class GameComponent implements OnInit {
           let wW = p5.windowWidth;
       
           // if the grain itself goes off the window remove it
-          if (gY >= wH || (gX >= wW || gX <= 0)){
-            if (grain.opacity <= 0) {
-              grain.removed = true;
-              return true;
-            }
+          if ((gY >= wH || (gX >= wW || gX <= 0)) && !grain.sifted){
+            grain.removed = true;
+            return true;
           }
 
           // sifting if mouse is in range of sand particle and the mouse is on screen
@@ -153,7 +158,7 @@ export class GameComponent implements OnInit {
     //                                    new Upgrade(name,                cost,   increaseCost,  value,  increaseValue,  quantity,  tooltip)
     this.upgradeDict["Sift Range"]      = new Upgrade('Sift Range',        0.25,   2,             50,     5,              [0, 20],   "Be further away from grains to sift them");
     this.upgradeDict["Sift Efficiency"] = new Upgrade('Sift Efficiency',   0.1,    2,             1,      0.05,           [0, 20],   "Allows you to sift more reliably");
-    this.upgradeDict["Grain Weight"]    = new Upgrade('Grain Weight',      1.25,   1.5,           1,      0.5,            [0, 10],   "Grains fall quicker");
+    this.upgradeDict["Grain Weight"]    = new Upgrade('Grain Weight',      1.25,   1.5,           2,      0.5,            [0, 10],   "Grains fall quicker");
     this.upgradeDict["Grain Rarity"]    = new Upgrade('Grain Rarity',      5,      5,             0.01,   0.01,           [0, 5],    "Get more money from each successful sift");
     this.upgradeDict["Grain Frequency"] = new Upgrade('Grain Frequency',   0.5,    1.1,           0,      1,              [0, 60],   "More grains? What's going on?");
   }
