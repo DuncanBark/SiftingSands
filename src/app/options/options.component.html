@@ -3,9 +3,12 @@
         <h2>Options</h2>
         <ul class="options-list">
             <li *ngFor="let option of optionDict | keyvalue">
+                <p *ngIf="option.value.name == 'Background color (Blue)'">General Color</p>
+                <p *ngIf="option.value.name == 'Sand color (Blue)'">Sand Color</p>
+                <p *ngIf="option.value.name == 'Sifter color (Blue)'">Sifter Color</p>
                 <label for="{{ option.value.name }}">{{ option.value.name }}</label>
-                <input type="number" id="{{ option.value.name }}" value="{{ option.value.value }}" (input)="setOption(option.value.name, $event.target.value)">
-            </li>
+                <input type="range" min="0" max="255" step="1" id="{{ option.value.name }}" value="{{ option.value.value }}" (input)="setOption(option.value.name, $event.target.value)">
+                <text class="option_text"> {{ option.value.value }}</text>
         </ul>
     </div>
 </div>

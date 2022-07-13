@@ -8,4 +8,11 @@
     <div [ngSwitch]="displayOptions">
         <app-options *ngSwitchCase="true" [optionDict]="optionDict" (optionReturn)="updateOption($event)"></app-options>
     </div>
+    <div class="game-text">
+        <text *ngIf="start_sand == false">Guess I gotta grab this thingy</text>
+        <text *ngIf="start_sand != false">Huh? What's that falling?</text>
+    </div>
+    <div class="guy">
+        <img src="assets/guy.png">
+    </div>
 </div>

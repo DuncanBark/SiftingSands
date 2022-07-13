@@ -14,9 +14,10 @@ export class GameComponent implements OnInit {
   private p5;
   money: number = 10000000;
   displayStore: boolean = false;
-  displayOptions: boolean = true;
+  displayOptions: boolean = false;
   upgradeDict: {[id:string] : Upgrade; } = {};
   optionDict: {[id:string] : Option; } = {};
+  start_sand: boolean = false;
 
   constructor() {
     console.log('Main app constructed');
@@ -36,11 +37,13 @@ export class GameComponent implements OnInit {
       let grains: Sand[] = [];
       let frame_rate = 60;
       let offScreen = true;
-      let holdSift = false;
-      let siftX: number;
-      let siftY: number;
+      let holdSift = true;
+      let siftX = p5.windowWidth/2;
+      let siftY =  p5.windowHeight/2;
       let stableFrameRate = 0;
       let curRange, curEfficiency, curWeight, curRarity, curFrequency;
+      let cursor = "grab"
+      let css_cursor = document.getElementsByClassName('game-canvas') as HTMLCollectionOf<HTMLElement>;
   
       p5.setup = () => {
         p5.frameRate(frame_rate);
@@ -55,8 +58,12 @@ export class GameComponent implements OnInit {
       };
   
       p5.draw = () => {
+        css_cursor[0].style.cursor = cursor
         p5.clear();
-        p5.background(Number(this.optionDict["Background color"].value));
+        let bR = Number(this.optionDict["Background color (Red)"].value)
+        let bG = Number(this.optionDict["Background color (Green)"].value)
+        let bB = Number(this.optionDict["Background color (Blue)"].value)
+        p5.background(p5.color(bR, bG, bB));
 
         if (!holdSift) {
           siftX = p5.mouseX;
@@ -72,7 +79,10 @@ export class GameComponent implements OnInit {
         let money = this.money;
 
         if (!offScreen || holdSift) {
-          p5.stroke(p5.color(100, 200, 100));
+          let sR = Number(this.optionDict["Sifter color (Red)"].value)
+          let sG = Number(this.optionDict["Sifter color (Green)"].value)
+          let sB = Number(this.optionDict["Sifter color (Blue)"].value)
+          p5.stroke(p5.color(sR, sG, sB));
           p5.line(siftX-curRange, siftY, siftX+curRange, siftY);
         }
 
@@ -94,9 +104,12 @@ export class GameComponent implements OnInit {
 
         // create new grain as a factor of framerate
         let grainWidth = 2 + (this.upgradeDict["Grain Weight"].quantity[0] / 8);
-        if (p5.frameCount % 60 == 0) {
+        let sR = Number(this.optionDict["Sand color (Red)"].value)
+        let sG = Number(this.optionDict["Sand color (Green)"].value)
+        let sB = Number(this.optionDict["Sand color (Blue)"].value)
+        if (p5.frameCount % 60 == 0 && this.start_sand) {
           for (let i = 0; i <= curFrequency; i++) {
-            grains.push(new Sand(Math.random()*p5.width, Math.random()*-300, grainWidth, curWeight, curRarity));
+            grains.push(new Sand(Math.random()*p5.width, Math.random()*-300, grainWidth, curWeight, curRarity, sR, sG, sB));
           }
         }
 
@@ -128,7 +141,7 @@ export class GameComponent implements OnInit {
           // sifting if mouse is in range of sand particle and the mouse is on screen
           if (!offScreen || holdSift) {
             if (siftX >= gX - curRange && siftX <= (gX + curRange)) {
-                if (siftY >= (gY - 25) && siftY <= (gY + 5)) {
+                if (siftY >= (gY - 10) && siftY <= (gY + 5)) {
                     if (!grain.sifted) {
                         money += grain.sift(curEfficiency);
                     }
@@ -139,8 +152,24 @@ export class GameComponent implements OnInit {
           return false;
         }
 
+        let distanceX = p5.mouseX >= (siftX-curRange-7) && p5.mouseX <= (siftX+curRange+7)
+        let distanceY = Math.abs(p5.mouseY - siftY) <= 7;
+        if (distanceX && distanceY) {
+          cursor = "grabbing"
+        } else {
+          cursor = "grab"
+        }
+
         p5.mouseClicked = () => {
-          if (!offScreen) {
+          let distanceX = p5.mouseX >= (siftX-curRange-7) && p5.mouseX <= (siftX+curRange+7)
+          let distanceY = Math.abs(p5.mouseY - siftY) <= 7;
+          if (!offScreen && (distanceX && distanceY)) {
+            if (cursor == "grab") {
+              cursor = "grabbing"
+            } else {
+              cursor = "grab"
+            }
+            this.start_sand = true;
             holdSift = !holdSift;
             siftX = p5.mouseX;
             siftY = p5.mouseY;
@@ -175,8 +204,16 @@ export class GameComponent implements OnInit {
 
   private createOptions = () => {
     console.log('creating options');
-    //                                    new Option(name,               value)
-    this.optionDict["Background color"] = new Option('Background color', 70);
+    //                                          new Option(name,               value)
+    this.optionDict["Background color (Red)"] = new Option('Background color (Red)', 50);
+    this.optionDict["Background color (Green)"] = new Option('Background color (Green)', 50);
+    this.optionDict["Background color (Blue)"] = new Option('Background color (Blue)', 50);
+    this.optionDict["Sand color (Red)"] = new Option('Sand color (Red)', 180);
+    this.optionDict["Sand color (Green)"] = new Option('Sand color (Green)', 180);
+    this.optionDict["Sand color (Blue)"] = new Option('Sand color (Blue)', 0);
+    this.optionDict["Sifter color (Red)"] = new Option('Sifter color (Red)', 0);
+    this.optionDict["Sifter color (Green)"] = new Option('Sifter color (Green)', 0);
+    this.optionDict["Sifter color (Blue)"] = new Option('Sifter color (Blue)', 0);
   }
 
   updateOption(value) {

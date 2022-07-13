@@ -2,6 +2,7 @@
     width: fit-content;
     padding: 0px;
     margin: 0px 0px 0px 10px;
+    // cursor: grabbing;
 }
 
 .store-button {
@@ -43,4 +44,18 @@
 
 .options-button:hover {
     background-color: #555;
+}
+
+.game-text {
+    position: absolute;
+    font-size: large;
+    width: fit-content;
+    right: 4%;
+    bottom: 37%;
+}
+
+.guy {
+    position: absolute;
+    right: 0%;
+    bottom: 0%;
 }
